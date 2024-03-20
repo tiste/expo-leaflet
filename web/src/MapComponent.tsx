@@ -68,18 +68,18 @@ const MapLayers = (props: MapLayersProps) => {
 
 const toLatLngLiteral = (latLng: LatLng): LatLngLiteral => {
   return {
-    lat: latLng.lat,
-    lng: latLng.lng,
+    lat: latLng?.lat,
+    lng: latLng?.lng,
   }
 }
 
 const bounds = (map?: LeafletMap | null): LatLngBoundsLiteral => {
   const bound = map?.getBounds()!
-  const northEast = bound.getNorthEast()
-  const southWest = bound.getSouthWest()
+  const northEast = bound?.getNorthEast()
+  const southWest = bound?.getSouthWest()
   return [
-    [northEast.lat, northEast.lng],
-    [southWest.lat, southWest.lng],
+    [northEast?.lat, northEast?.lng],
+    [southWest?.lat, southWest?.lng],
   ]
 }
 
@@ -138,6 +138,13 @@ export const MapComponent = (props: ExpoLeafletProps) => {
               {...props.mapOptions}
               whenCreated={(map: LeafletMap) => {
                 setMapRef(map)
+
+                setTimeout(() => {
+                  if (props.mapShapes && props.mapShapes[0].shapeType === 'polyline') {
+                    map.fitBounds(props.mapShapes[0].positions as [number, number][]);
+                  }
+                }, 500);
+
                 map.addEventListener({
                   click: (event: LeafletMouseEvent) => {
                     const { latlng } = event
